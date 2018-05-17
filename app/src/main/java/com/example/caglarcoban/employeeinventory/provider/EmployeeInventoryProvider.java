@@ -19,8 +19,18 @@ import com.example.caglarcoban.employeeinventory.database.InventorySQLiteHelper;
 public class EmployeeInventoryProvider extends ContentProvider{
 
     private static UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+    private static EmployeeInventoryProvider employeeInventoryProvider = new EmployeeInventoryProvider();
 
     private InventorySQLiteHelper inventoryHelper;
+
+    public static EmployeeInventoryProvider getInstance(){
+        return employeeInventoryProvider;
+    }
+
+    private EmployeeInventoryProvider(){
+        onCreate();
+    }
+
 
     @Override
     public boolean onCreate() {
@@ -42,7 +52,7 @@ public class EmployeeInventoryProvider extends ContentProvider{
 
             return cursor;
         }catch(SQLiteException e){
-            Toast.makeText(getContext(), "Database Unavailable", Toast.LENGTH_SHORT);
+            Toast.makeText(getContext(), "Database Unavailable", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
             return null;
         }
@@ -57,7 +67,7 @@ public class EmployeeInventoryProvider extends ContentProvider{
     @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
-        return null;
+        return EmployeeContracts.MIME_TYPE_EMPLOYEE;
     }
 
     @Nullable
@@ -71,7 +81,7 @@ public class EmployeeInventoryProvider extends ContentProvider{
             Uri newUri = contentUris.withAppendedId(uri, rowId);
             return newUri;
         }catch(SQLiteException e){
-            Toast.makeText(getContext(), "Database Unavailable", Toast.LENGTH_SHORT);
+            Toast.makeText(getContext(), "Database Unavailable", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
             return null;
         }
@@ -80,12 +90,33 @@ public class EmployeeInventoryProvider extends ContentProvider{
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
-        return 0;
+
+        String table = getTableNameFromUri(uri);
+        try{
+            SQLiteDatabase database = inventoryHelper.getWritableDatabase();
+            int deletedCounts = database.delete(table, selection, selectionArgs);
+            return deletedCounts;
+        }catch(SQLiteException e){
+            Toast.makeText(getContext(), "Database Unavailable", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+            return -1;
+        }
     }
 
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
-        return 0;
+
+        String table = getTableNameFromUri(uri);
+        try{
+            SQLiteDatabase database = inventoryHelper.getWritableDatabase();
+            int updatedrows = database.update(table, values, selection, selectionArgs);
+            return updatedrows;
+        }catch(SQLiteException e){
+            Toast.makeText(getContext(), "Database unavailable", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+            return -1;
+        }
+
     }
 
     public static final class EmployeeContracts{
@@ -95,9 +126,10 @@ public class EmployeeInventoryProvider extends ContentProvider{
         public static final String NAME = "name";
         public static final String SURNAME =  "surname";
         public static final String AGE = "age";
-        public static final String CONTENT_URI = "content://" + AUTHORITY + "/" + PATH;
-
-
+        public static final String MIME_TYPE_EMPLOYEE = "vnd.android.cursor.item/vnd.com.example.caglar.empenvtory.employee";
+        public static final String ID = "_id";
+        public static final String PHONE = "phone";
+        public static Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + PATH);
     }
 
 

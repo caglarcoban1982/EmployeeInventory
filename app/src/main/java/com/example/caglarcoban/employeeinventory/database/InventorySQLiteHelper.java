@@ -1,5 +1,6 @@
 package com.example.caglarcoban.employeeinventory.database;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -17,12 +18,31 @@ public class InventorySQLiteHelper extends SQLiteOpenHelper{
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table " + EmployeeInventoryProvider.EmployeeContracts.CONTENT + "(" +
+        db.execSQL("create table " + EmployeeInventoryProvider.EmployeeContracts.PATH + "(" +
                 EmployeeInventoryProvider.EmployeeContracts.NAME + " text, "+
                 EmployeeInventoryProvider.EmployeeContracts.SURNAME + " text, "+
-                EmployeeInventoryProvider.EmployeeContracts.AGE + " int "+
+                EmployeeInventoryProvider.EmployeeContracts.AGE + " int, "+
+                EmployeeInventoryProvider.EmployeeContracts.PHONE + " text "+
                 ")"
         );
+
+        insertData(db,"caglar", "coban", 35, "053232323232");
+        insertData(db,"pınar", "coban", 33, "054454444444");
+        insertData(db,"serkan", "ozkan", 25, "06886888888");
+
+
+
+    }
+
+    private void insertData(SQLiteDatabase database, String name, String surname, int age, String phone) {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(EmployeeInventoryProvider.EmployeeContracts.NAME, name);
+            contentValues.put(EmployeeInventoryProvider.EmployeeContracts.SURNAME, surname);
+            contentValues.put(EmployeeInventoryProvider.EmployeeContracts.AGE, age);
+            contentValues.put(EmployeeInventoryProvider.EmployeeContracts.PHONE, phone);
+
+            database.insert(EmployeeInventoryProvider.EmployeeContracts.PATH, null, contentValues);
+
     }
 
     @Override
