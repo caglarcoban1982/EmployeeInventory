@@ -19,12 +19,22 @@ import com.example.caglarcoban.employeeinventory.database.InventorySQLiteHelper;
 public class EmployeeInventoryProvider extends ContentProvider{
 
     private static UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-    private static EmployeeInventoryProvider employeeInventoryProvider = new EmployeeInventoryProvider();
+    private static EmployeeInventoryProvider employeeInventoryProvider;
+    private Context explicitContext = null;
 
     private InventorySQLiteHelper inventoryHelper;
 
-    public static EmployeeInventoryProvider getInstance(){
-        return employeeInventoryProvider;
+    public static EmployeeInventoryProvider getInstance(Context context){
+
+        if(employeeInventoryProvider != null){
+            employeeInventoryProvider = new EmployeeInventoryProvider();
+            employeeInventoryProvider.explicitContext = context;
+            return employeeInventoryProvider;
+        }else{
+            return employeeInventoryProvider;
+        }
+
+
     }
 
     private EmployeeInventoryProvider(){
@@ -34,7 +44,11 @@ public class EmployeeInventoryProvider extends ContentProvider{
 
     @Override
     public boolean onCreate() {
-        inventoryHelper = new InventorySQLiteHelper(getContext());
+
+        if(explicitContext != null)
+            inventoryHelper = new InventorySQLiteHelper(explicitContext);
+        else
+            inventoryHelper = new InventorySQLiteHelper(getContext());
         uriMatcher.addURI(EmployeeContracts.AUTHORITY, EmployeeContracts.PATH, 1);
         return true;
     }
