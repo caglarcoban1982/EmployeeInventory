@@ -19,6 +19,7 @@ public class InventorySQLiteHelper extends SQLiteOpenHelper{
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table " + EmployeeInventoryProvider.EmployeeContracts.PATH + "(" +
+                EmployeeInventoryProvider.EmployeeContracts.ID + " integer primary key autoincrement, "+
                 EmployeeInventoryProvider.EmployeeContracts.NAME + " text, "+
                 EmployeeInventoryProvider.EmployeeContracts.SURNAME + " text, "+
                 EmployeeInventoryProvider.EmployeeContracts.AGE + " int, "+

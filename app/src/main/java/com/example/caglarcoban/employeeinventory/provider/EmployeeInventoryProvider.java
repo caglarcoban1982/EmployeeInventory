@@ -11,6 +11,7 @@ import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.caglarcoban.employeeinventory.database.InventorySQLiteHelper;
@@ -18,7 +19,6 @@ import com.example.caglarcoban.employeeinventory.database.InventorySQLiteHelper;
 
 public class EmployeeInventoryProvider extends ContentProvider{
 
-    private static UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     private static EmployeeInventoryProvider employeeInventoryProvider;
     private Context explicitContext = null;
 
@@ -26,9 +26,8 @@ public class EmployeeInventoryProvider extends ContentProvider{
 
     public static EmployeeInventoryProvider getInstance(Context context){
 
-        if(employeeInventoryProvider != null){
-            employeeInventoryProvider = new EmployeeInventoryProvider();
-            employeeInventoryProvider.explicitContext = context;
+        if(employeeInventoryProvider == null){
+            employeeInventoryProvider = new EmployeeInventoryProvider(context);
             return employeeInventoryProvider;
         }else{
             return employeeInventoryProvider;
@@ -37,7 +36,8 @@ public class EmployeeInventoryProvider extends ContentProvider{
 
     }
 
-    private EmployeeInventoryProvider(){
+    private EmployeeInventoryProvider(Context context){
+        explicitContext = context;
         onCreate();
     }
 
@@ -49,7 +49,7 @@ public class EmployeeInventoryProvider extends ContentProvider{
             inventoryHelper = new InventorySQLiteHelper(explicitContext);
         else
             inventoryHelper = new InventorySQLiteHelper(getContext());
-        uriMatcher.addURI(EmployeeContracts.AUTHORITY, EmployeeContracts.PATH, 1);
+
         return true;
     }
 
@@ -60,13 +60,15 @@ public class EmployeeInventoryProvider extends ContentProvider{
 
         String table = getTableNameFromUri(uri);
 
+
+
         try{
             SQLiteDatabase database = inventoryHelper.getReadableDatabase();
             cursor = database.query(table, projection, selection, selectionArgs, null, null, sortOrder);
 
             return cursor;
         }catch(SQLiteException e){
-            Toast.makeText(getContext(), "Database Unavailable", Toast.LENGTH_SHORT).show();
+            Log.e("EmpInventoryProvider", "Database Error", e);
             e.printStackTrace();
             return null;
         }
@@ -75,7 +77,11 @@ public class EmployeeInventoryProvider extends ContentProvider{
     }
 
     private String getTableNameFromUri(Uri uri) {
-        return uri.getPath();
+        String path =  uri.getPath();
+        if(path.startsWith("/"))
+            return path.substring(1);
+        else
+            return path;
     }
 
     @Nullable
@@ -95,7 +101,7 @@ public class EmployeeInventoryProvider extends ContentProvider{
             Uri newUri = contentUris.withAppendedId(uri, rowId);
             return newUri;
         }catch(SQLiteException e){
-            Toast.makeText(getContext(), "Database Unavailable", Toast.LENGTH_SHORT).show();
+            Log.e("EmpInventoryProvider", "Database Error", e);
             e.printStackTrace();
             return null;
         }
@@ -111,7 +117,7 @@ public class EmployeeInventoryProvider extends ContentProvider{
             int deletedCounts = database.delete(table, selection, selectionArgs);
             return deletedCounts;
         }catch(SQLiteException e){
-            Toast.makeText(getContext(), "Database Unavailable", Toast.LENGTH_SHORT).show();
+            Log.e("EmpInventoryProvider", "Database Error", e);
             e.printStackTrace();
             return -1;
         }
@@ -126,7 +132,7 @@ public class EmployeeInventoryProvider extends ContentProvider{
             int updatedrows = database.update(table, values, selection, selectionArgs);
             return updatedrows;
         }catch(SQLiteException e){
-            Toast.makeText(getContext(), "Database unavailable", Toast.LENGTH_SHORT).show();
+            Log.e("EmpInventoryProvider", "Database Error", e);
             e.printStackTrace();
             return -1;
         }

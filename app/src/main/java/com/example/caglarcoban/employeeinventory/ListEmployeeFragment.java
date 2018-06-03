@@ -34,7 +34,7 @@ public class ListEmployeeFragment extends Fragment {
 
         ListView listView = view.findViewById(R.id.employee_list);
 
-        EmployeeInventoryProvider eip = EmployeeInventoryProvider.getInstance();
+        EmployeeInventoryProvider eip = EmployeeInventoryProvider.getInstance(getActivity());
 
         String[] projections = new String[]{EmployeeInventoryProvider.EmployeeContracts.ID, EmployeeInventoryProvider.EmployeeContracts.NAME};
 
