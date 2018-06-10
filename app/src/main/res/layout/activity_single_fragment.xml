@@ -4,14 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ListEmployeeActivity">
+    tools:context=".SingleFragmentActivity">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/list_employee_fragment"
+        android:id="@+id/fragment_container"
         ></FrameLayout>
-
-
 
 </android.support.constraint.ConstraintLayout>

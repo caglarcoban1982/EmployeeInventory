@@ -2,12 +2,14 @@ package com.example.caglarcoban.employeeinventory;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -18,7 +20,7 @@ import com.example.caglarcoban.employeeinventory.provider.EmployeeInventoryProvi
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ListEmployeeFragment extends Fragment {
+public class ListEmployeeFragment extends Fragment implements AdapterView.OnItemClickListener{
 
 
     public ListEmployeeFragment() {
@@ -50,8 +52,18 @@ public class ListEmployeeFragment extends Fragment {
 
         listView.setAdapter(cursorAdapter);
 
+        listView.setOnItemClickListener(this);
+
+
+
         return view;
 
     }
 
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Intent intent = EditPersonActivity.newIntent(getActivity(), (int)id);
+        startActivity(intent);
+
+    }
 }
