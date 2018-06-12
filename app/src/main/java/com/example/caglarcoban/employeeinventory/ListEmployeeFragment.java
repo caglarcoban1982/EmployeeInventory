@@ -36,12 +36,7 @@ public class ListEmployeeFragment extends Fragment implements AdapterView.OnItem
 
         ListView listView = view.findViewById(R.id.employee_list);
 
-        EmployeeInventoryProvider eip = EmployeeInventoryProvider.getInstance(getActivity());
-
-        String[] projections = new String[]{EmployeeInventoryProvider.EmployeeContracts.ID, EmployeeInventoryProvider.EmployeeContracts.NAME};
-
-
-        Cursor cursor = eip.query(EmployeeInventoryProvider.EmployeeContracts.CONTENT_URI, projections, null, null, null);
+        Cursor cursor = getEmployeeList();
 
         CursorAdapter cursorAdapter = new SimpleCursorAdapter(getActivity(),
                 android.R.layout.simple_list_item_1,
@@ -58,6 +53,16 @@ public class ListEmployeeFragment extends Fragment implements AdapterView.OnItem
 
         return view;
 
+    }
+
+    private Cursor getEmployeeList() {
+
+        EmployeeInventoryProvider eip = EmployeeInventoryProvider.getInstance(getActivity());
+
+        String[] projections = new String[]{EmployeeInventoryProvider.EmployeeContracts.ID, EmployeeInventoryProvider.EmployeeContracts.NAME};
+
+
+        return eip.query(EmployeeInventoryProvider.EmployeeContracts.CONTENT_URI, projections, null, null, null);
     }
 
     @Override

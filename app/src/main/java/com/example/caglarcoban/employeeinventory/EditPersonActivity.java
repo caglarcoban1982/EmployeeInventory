@@ -15,7 +15,10 @@ public class EditPersonActivity extends SingleFragmentActivity {
 
     @Override
     public Fragment createFragment() {
-        return new EditPersonFragment();
+
+        int selectedPerson = getIntent().getIntExtra(SELECTED_PERSON, 0);
+
+        return EditPersonFragment.newInstance(selectedPerson);
     }
 
     public static Intent newIntent(Context context , int id){
